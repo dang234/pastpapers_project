@@ -1,0 +1,234 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Past Papers{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Apply saved theme before Tailwind loads -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="bg-gray-50 font-sans text-gray-800 text-sm dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 border-b shadow-sm">
+        <div class="max-w-7xl mx-auto px-3 py-1 flex justify-between items-center">
+            
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="text-sm font-bold text-blue-600 dark:text-blue-400">📚 PastPapers</a>
+
+            <!-- Menu Items -->
+            <div class="flex items-center gap-3 text-xs">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'my_files' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">My Files</a>
+
+                    <!-- Settings Dropdown -->
+                    <div class="relative" id="settingsMenu">
+                        <button id="settingsButton" class="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 focus:outline-none">
+                            ⚙️ <span>Settings</span>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div id="settingsDropdown"
+                             class="absolute right-0 mt-1 w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg 
+                                    opacity-0 invisible transform scale-y-0 origin-top transition-all duration-200 text-xs">
+                            
+                            <!-- Theme -->
+                            <div class="p-1.5 border-b border-gray-200 dark:border-gray-700">
+                                <div class="flex items-center justify-between">
+                                    <span>Themes</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="themeToggle" class="sr-only peer">
+                                        <div class="w-7 h-3.5 bg-gray-300 peer-checked:bg-blue-600 rounded-full 
+                                                    after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                                    after:bg-white after:h-2.5 after:w-2.5 after:rounded-full 
+                                                    after:transition-all peer-checked:after:translate-x-3.5"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Notifications -->
+                            <div class="p-1.5 border-b border-gray-200 dark:border-gray-700">
+                                <div class="flex items-center justify-between">
+                                    <span>Notifications</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="notifToggle" class="sr-only peer">
+                                        <div class="w-7 h-3.5 bg-gray-300 peer-checked:bg-blue-600 rounded-full 
+                                                    after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                                    after:bg-white after:h-2.5 after:w-2.5 after:rounded-full 
+                                                    after:transition-all peer-checked:after:translate-x-3.5"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Language -->
+                            <div class="p-1.5">
+                                <label class="block mb-0.5">Language</label>
+                                <select id="languageSelect" class="w-full px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs focus:outline-none">
+                                    <option value="en">English</option>
+                                    <option value="sw">Swahili</option>
+                                    <option value="fr">French</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'about' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">About</a>
+
+            
+                    <form method="POST" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-500 hover:text-red-600">Logout</button>
+                    </form>
+
+                    <!-- User Avatar with Initials -->
+                    <div class="relative group">
+                        <!-- Avatar -->
+                        <a href="{% url 'account_manager' %}" class="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white font-bold">
+                            {% if user.profile.profile_image %}
+                                <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="w-4 h-4 rounded-full object-cover">
+                            {% else %}
+                                {{ user.first_name|default:user.username|slice:":1" }}{{ user.last_name|slice:":1" }}
+                            {% endif %}
+                        </a>
+                    </div>
+                    
+
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="max-w-6xl mx-auto px-3 py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const notifToggle = document.getElementById('notifToggle');
+        const languageSelect = document.getElementById('languageSelect');
+        const settingsButton = document.getElementById('settingsButton');
+        const settingsDropdown = document.getElementById('settingsDropdown');
+
+        const savedTheme = localStorage.getItem('theme');
+        const savedNotif = localStorage.getItem('notifications');
+        const savedLang = localStorage.getItem('language');
+
+        // Apply saved theme or default to light
+        if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            if (themeToggle) themeToggle.checked = true;
+        } else {
+            html.classList.remove('dark');
+            if (themeToggle) themeToggle.checked = false;
+        }
+
+        // Apply saved notifications
+        if (savedNotif === 'on' && notifToggle) {
+            notifToggle.checked = true;
+        }
+
+        // Apply saved language
+        if (savedLang && languageSelect) {
+            languageSelect.value = savedLang;
+        }
+
+        // Theme toggle
+        if (themeToggle) {
+            themeToggle.addEventListener('change', () => {
+                const theme = themeToggle.checked ? 'dark' : 'light';
+                html.classList.toggle('dark', theme === 'dark');
+                localStorage.setItem('theme', theme);
+
+                fetch('/set-theme/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: JSON.stringify({ theme }),
+                });
+            });
+        }
+
+        // Notifications toggle
+        if (notifToggle) {
+            notifToggle.addEventListener('change', () => {
+                localStorage.setItem('notifications', notifToggle.checked ? 'on' : 'off');
+            });
+        }
+
+        // Language change
+        if (languageSelect) {
+            languageSelect.addEventListener('change', () => {
+                localStorage.setItem('language', languageSelect.value);
+            });
+        }
+
+        // Settings dropdown toggle
+        if (settingsButton && settingsDropdown) {
+            settingsButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = settingsDropdown.classList.contains('opacity-100');
+                settingsDropdown.classList.toggle('opacity-100', !isOpen);
+                settingsDropdown.classList.toggle('opacity-0', isOpen);
+                settingsDropdown.classList.toggle('visible', !isOpen);
+                settingsDropdown.classList.toggle('invisible', isOpen);
+                settingsDropdown.classList.toggle('scale-y-100', !isOpen);
+                settingsDropdown.classList.toggle('scale-y-0', isOpen);
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!settingsButton.contains(e.target) && !settingsDropdown.contains(e.target)) {
+                    settingsDropdown.classList.add('opacity-0', 'invisible', 'scale-y-0');
+                    settingsDropdown.classList.remove('opacity-100', 'visible', 'scale-y-100');
+                }
+            });
+        }
+
+        function getCSRFToken() {
+            return document.cookie.split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+        }
+    });
+
+    // User Avatar with random color
+    (function() {
+        const avatar = document.getElementById('userAvatar');
+        if (avatar) {
+            // Get user's first & last name initials from Django user object
+            const fullName = "{{ user.get_full_name|default:user.username }}";
+            const initials = fullName.split(" ").map(n => n[0]).join("").substring(0, 2);
+    
+            // Generate random color
+            const colors = ["#EF4444", "#F59E0B", "#10B981", "#3B82F6", "#8B5CF6", "#EC4899"];
+            const bgColor = colors[Math.floor(Math.random() * colors.length)];
+    
+            avatar.textContent = initials;
+            avatar.style.backgroundColor = bgColor;
+        }
+    })();
+
+    </script>
+
+</body>
+</html>

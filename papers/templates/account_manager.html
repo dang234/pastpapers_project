@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Account Manager{% endblock %}
+
+{% block content %}
+<div class="flex justify-center py-6 bg-gray-50"> <!-- Light site-wide background -->
+    <div class="bg-white rounded-lg shadow w-full max-w-lg p-5 sm:p-6 border border-gray-200">
+
+        {% if not edit_mode %}
+            <!-- VIEW MODE -->
+            <div class="flex items-center gap-4 border-b pb-4">
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" class="w-16 h-16 rounded-full object-cover border border-gray-300">
+                {% else %}
+                    <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-600 text-white font-semibold text-lg">
+                        {{ user.first_name|default:user.username|slice:":1" }}{{ user.last_name|slice:":1" }}
+                    </div>
+                {% endif %}
+
+                <div>
+                    <h1 class="text-base font-bold text-gray-900">{{ user.get_full_name|default:user.username }}</h1>
+                    <p class="text-gray-500 text-xs">@{{ user.username }}</p>
+                    {% if profile.university %}
+                        <p class="text-gray-600 text-xs">{{ profile.university }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="mt-3 text-sm text-gray-700">
+                {% if profile.bio %}
+                    {{ profile.bio }}
+                {% else %}
+                    <span class="italic text-gray-500">No bio provided.</span>
+                {% endif %}
+            </div>
+
+            <!-- Edit Button -->
+            <div class="mt-3 flex justify-end">
+                <a href="?edit=true" class="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700 transition">
+                    Edit Profile
+                </a>
+            </div>
+
+        {% else %}
+            <!-- EDIT MODE -->
+            <h2 class="text-sm font-semibold text-gray-900 mb-2">Edit Profile</h2>
+            <form method="POST" enctype="multipart/form-data" class="space-y-3">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Profile Picture</label>
+                    {% render_field profile_form.profile_image class="block w-full text-xs text-gray-900 border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer" %}
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">First Name</label>
+                        {% render_field user_form.first_name class="block w-full text-xs text-gray-900 border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Last Name</label>
+                        {% render_field user_form.last_name class="block w-full text-xs text-gray-900 border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" %}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Bio</label>
+                    {% render_field profile_form.bio class="block w-full text-xs text-gray-900 border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" %}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">University</label>
+                    {% render_field profile_form.university class="block w-full text-xs text-gray-900 border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" %}
+                </div>
+
+                <div class="flex justify-between">
+                    <a href="{% url 'account_manager' %}" class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 transition">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700 transition">
+                        Save
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+
+<!-- Live Image Preview -->
+<script>
+    const fileInput = document.querySelector('input[name="profile_image"]');
+    const preview = document.getElementById('profilePreview');
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (preview.tagName.toLowerCase() === 'img') {
+                    preview.src = e.target.result;
+                } else {
+                    preview.outerHTML = `<img id="profilePreview" src="${e.target.result}" class="w-12 h-12 rounded-full object-cover border border-gray-300">`;
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

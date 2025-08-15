@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About - Past Paper Archive{% endblock %}
+
+{% block content %}
+
+<!-- Font Awesome for social icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<div class="flex justify-center items-center min-h-screen bg-gray-50">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-200 text-center">
+        
+        <!-- Profile Picture -->
+        <img src="{% static 'papers/images/profile.jpg' %}" 
+             alt="Developer Photo" 
+             class="w-28 h-28 rounded-full mx-auto shadow-md border-2 border-blue-500">
+        
+        <!-- Name -->
+        <h2 class="text-xl font-bold text-blue-600 mt-4">Dang Tang</h2>
+        <p class="text-sm text-gray-500">Full-Stack Developer • Django & Tailwind Enthusiast</p>
+
+        <!-- Bio -->
+        <p class="mt-4 text-sm text-gray-700 leading-relaxed">
+            I’m the creator of the <strong>Past Paper Archive</strong> platform — designed to help students easily upload, browse, and access academic past papers.
+            My focus is building clean, functional, and user-friendly applications using modern web technologies.
+        </p>
+
+        <!-- Tech Stack -->
+        <div class="mt-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-2">Tech Stack</h3>
+            <div class="flex flex-wrap justify-center gap-2">
+                <span class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">Django</span>
+                <span class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full">Python</span>
+                <span class="px-3 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">JavaScript</span>
+                <span class="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full">Tailwind CSS</span>
+                <span class="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-full">MySQL</span>
+            </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="mt-5 flex justify-center gap-4">
+            <a href="https://github.com/Dang234" target="_blank" class="text-gray-600 hover:text-black" title="GitHub">
+                <i class="fab fa-github fa-lg"></i>
+            </a>
+            <a href="mailto:dtangchan@gmail.com" class="text-red-500 hover:text-red-700" title="Email">
+                <i class="fas fa-envelope fa-lg"></i>
+            </a>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-6">
+            <a href="{% url 'home' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm shadow-sm">Back to Home</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

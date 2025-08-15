@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Past Paper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
+
+    <div class="w-full max-w-xl bg-white p-8 rounded-xl shadow-md">
+        <h2 class="text-2xl font-semibold text-center text-blue-700 mb-6">📤 Upload Past Paper</h2>
+
+        {% if success %}
+            <div class="mb-4 bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded">
+                ✅ File uploaded successfully!
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-5">
+            {% csrf_token %}
+
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700">Paper Title</label>
+                <input type="text" name="title" id="title" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="course_code" class="block text-sm font-medium text-gray-700">Course Code</label>
+                <input type="text" name="course_code" id="course_code" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                <input type="text" name="department" id="department" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="year" class="block text-sm font-medium text-gray-700">Year</label>
+                <input type="number" name="year" id="year" required min="1900" max="2100"
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="semester" class="block text-sm font-medium text-gray-700">Semester</label>
+                <input type="text" name="semester" id="semester" placeholder="e.g. Jan/May" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="file" class="block text-sm font-medium text-gray-700">Upload File (PDF only)</label>
+                <input type="file" name="file" id="file" accept=".pdf" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-all duration-200">
+                    📎 Upload Paper
+                </button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Past Paper Archive{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 text-gray-800 dark:text-gray-200 space-y-8">
+
+    <!-- Welcome Title -->
+    <h2 class="text-2xl font-bold text-center text-blue-600 dark:text-blue-400">
+        📚 Welcome to Past Paper Archive
+    </h2>
+
+    <!-- Search Button -->
+    <div class="flex justify-center">
+        <a href="{% url 'view_papers' %}"
+           class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm shadow transition-all duration-200">
+            Search Past Papers
+        </a>
+    </div>
+
+    <!-- Recently Uploaded & Most Downloaded -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Recently Uploaded -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                📌 Recently Uploaded
+            </h3>
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for paper in recent_papers %}
+                    <li class="flex justify-between items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">
+                        <span class="truncate">{{ paper.title }}</span>
+                        <a href="{% url 'download_paper' paper.id %}"
+                           class="text-blue-600 dark:text-blue-400 hover:underline text-xs">
+                           Download
+                        </a>
+                    </li>
+                {% empty %}
+                    <li class="px-4 py-2 text-gray-400 text-sm">No recent papers found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Most Downloaded -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                🔥 Most Downloaded
+            </h3>
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for paper in popular_papers %}
+                    <li class="flex justify-between items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">
+                        <span class="truncate">{{ paper.title }}</span>
+                        <span class="text-xs bg-gray-200 dark:bg-gray-600 px-2 py-0.5 rounded">
+                            {{ paper.download_count }} downloads
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="px-4 py-2 text-gray-400 text-sm">No data available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

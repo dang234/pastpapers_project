@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-6 py-8 space-y-8">
+
+  <h2 class="text-2xl font-semibold text-center text-blue-600 mb-6">⚙️ Settings</h2>
+
+  <!-- Theme Setting -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">🌓 Theme</h3>
+    <div class="flex items-center justify-between">
+      <span class="text-gray-800 dark:text-gray-200">Dark Mode</span>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="themeToggle" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-600 peer-checked:bg-blue-600 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Notification Setting -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">🔔 Notifications</h3>
+    <div class="flex items-center justify-between">
+      <span class="text-gray-800 dark:text-gray-200">Enable Notifications</span>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="notifToggle" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-600 peer-checked:bg-blue-600 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Language Setting -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">🌍 Language</h3>
+    <select id="languageSelect" class="w-full px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="en">English</option>
+      <option value="sw">Swahili</option>
+      <option value="fr">French</option>
+    </select>
+  </div>
+
+</div>
+
+<script>
+  // === Theme Toggle ===
+  document.addEventListener('DOMContentLoaded', () => {
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const notifToggle = document.getElementById('notifToggle');
+    const languageSelect = document.getElementById('languageSelect');
+
+    // Load saved preferences
+    const savedTheme = localStorage.getItem('theme');
+    const savedNotif = localStorage.getItem('notifications');
+    const savedLang = localStorage.getItem('language');
+
+    // Apply theme
+    if (savedTheme === 'dark') {
+      html.classList.add('dark');
+      themeToggle.checked = true;
+    }
+
+    // Apply notifications
+    if (savedNotif === 'on') {
+      notifToggle.checked = true;
+    }
+
+    // Apply language
+    if (savedLang) {
+      languageSelect.value = savedLang;
+    }
+
+    // Theme toggle change
+    themeToggle.addEventListener('change', () => {
+      if (themeToggle.checked) {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // Notifications toggle change
+    notifToggle.addEventListener('change', () => {
+      localStorage.setItem('notifications', notifToggle.checked ? 'on' : 'off');
+    });
+
+    // Language selector change
+    languageSelect.addEventListener('change', () => {
+      localStorage.setItem('language', languageSelect.value);
+      alert('Language preference saved: ' + languageSelect.value);
+    });
+  });
+</script>
+{% endblock %}

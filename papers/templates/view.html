@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}View Past Papers{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 text-gray-800 dark:text-gray-200">
+  <h2 class="text-center text-xl font-bold mb-6">📚 Past Papers Archive</h2>
+
+  <!-- Search & Filter -->
+  <form method="GET" action="{% url 'view_papers' %}" class="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
+    <input type="text" name="q" placeholder="Search title, code, year..."
+      value="{{ query|default:'' }}"
+      class="col-span-2 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400">
+
+    <select name="department" class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs">
+      <option value="">All Departments</option>
+      {% for dept in departments %}
+        <option value="{{ dept }}" {% if dept == selected_department %}selected{% endif %}>{{ dept }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="year" class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs">
+      <option value="">All Years</option>
+      {% for y in years %}
+        <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs shadow">
+      Filter
+    </button>
+  </form>
+
+  <!-- Papers Table -->
+  {% if papers %}
+  <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+    <table class="w-full text-left text-xs">
+      <thead class="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <tr>
+          <th class="px-2 py-1 font-semibold">Title</th>
+          <th class="px-2 py-1 font-semibold">Course Code</th>
+          <th class="px-2 py-1 font-semibold">Department</th>
+          <th class="px-2 py-1 font-semibold">Year</th>
+          <th class="px-2 py-1 font-semibold">Semester</th>
+          <th class="px-2 py-1 font-semibold text-center">File</th>
+          <th class="px-2 py-1 font-semibold">Uploaded</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        {% for paper in papers %}
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <td class="px-2 py-1">{{ paper.title }}</td>
+          <td class="px-2 py-1">{{ paper.course_code }}</td>
+          <td class="px-2 py-1">{{ paper.department }}</td>
+          <td class="px-2 py-1">{{ paper.year }}</td>
+          <td class="px-2 py-1">{{ paper.semester }}</td>
+          <td class="px-2 py-1 text-center">
+            <a href="{% url 'download_paper' paper.id %}"
+              class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-2 py-0.5 rounded text-xs shadow">
+              Download
+            </a>
+            <div class="text-gray-500 text-[10px] mt-0.5">{{ paper.download_count }} downloads</div>
+          </td>
+          <td class="px-2 py-1">{{ paper.uploaded_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-center items-center mt-4 space-x-2 text-xs">
+    {% if papers.has_previous %}
+      <a href="?page={{ papers.previous_page_number }}&q={{ query }}&department={{ selected_department }}&year={{ selected_year }}"
+        class="px-2 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">Previous</a>
+    {% else %}
+      <span class="px-2 py-1 text-gray-400 border rounded cursor-not-allowed">Previous</span>
+    {% endif %}
+
+    <span class="px-2 py-1">Page {{ papers.number }} of {{ papers.paginator.num_pages }}</span>
+
+    {% if papers.has_next %}
+      <a href="?page={{ papers.next_page_number }}&q={{ query }}&department={{ selected_department }}&year={{ selected_year }}"
+        class="px-2 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">Next</a>
+    {% else %}
+      <span class="px-2 py-1 text-gray-400 border rounded cursor-not-allowed">Next</span>
+    {% endif %}
+  </div>
+
+  {% else %}
+    <div class="text-center mt-8 text-gray-500 text-sm">
+      No past papers found.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
