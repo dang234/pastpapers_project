@@ -3,56 +3,334 @@
 
 {% block title %}About - Past Paper Archive{% endblock %}
 
-{% block content %}
-
+{% block extra_head %}
 <!-- Font Awesome for social icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-<div class="flex justify-center items-center min-h-screen bg-gray-50">
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-200 text-center">
-        
-        <!-- Profile Picture -->
-        <img src="{% static 'papers/images/profile.jpg' %}" 
-             alt="Developer Photo" 
-             class="w-28 h-28 rounded-full mx-auto shadow-md border-2 border-blue-500">
-        
-        <!-- Name -->
-        <h2 class="text-xl font-bold text-blue-600 mt-4">Dang Tang</h2>
-        <p class="text-sm text-gray-500">Full-Stack Developer • Django & Tailwind Enthusiast</p>
+<style>
+  /* Custom animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+  }
+  
+  .fade-in-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+{% endblock %}
 
-        <!-- Bio -->
-        <p class="mt-4 text-sm text-gray-700 leading-relaxed">
-            I’m the creator of the <strong>Past Paper Archive</strong> platform — designed to help students easily upload, browse, and access academic past papers.
-            My focus is building clean, functional, and user-friendly applications using modern web technologies.
-        </p>
-
-        <!-- Tech Stack -->
-        <div class="mt-5">
-            <h3 class="text-sm font-semibold text-gray-600 mb-2">Tech Stack</h3>
-            <div class="flex flex-wrap justify-center gap-2">
-                <span class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">Django</span>
-                <span class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full">Python</span>
-                <span class="px-3 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">JavaScript</span>
-                <span class="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full">Tailwind CSS</span>
-                <span class="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded-full">MySQL</span>
+{% block content %}
+<!-- Hero Section -->
+<section class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12">
+  <div class="container mx-auto px-4">
+    
+    <!-- Main About Card -->
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Developer Profile Section -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 mb-8 border border-gray-200 dark:border-gray-700 fade-in-section">
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+          
+          <!-- Profile Image -->
+          <div class="flex-shrink-0">
+            <div class="relative">
+              <img src="{% static 'papers/images/profile.jpg' %}" 
+                   alt="Dang Tang - Developer" 
+                   class="w-32 h-32 rounded-full shadow-xl border-4 border-blue-500 dark:border-blue-400 animate-float">
+              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center">
+                <i class="fas fa-code text-white text-xs"></i>
+              </div>
             </div>
+          </div>
+          
+          <!-- Profile Info -->
+          <div class="flex-1 text-center md:text-left">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              Dang Tang
+            </h1>
+            <p class="text-lg text-blue-600 dark:text-blue-400 font-medium mb-4">
+              Full-Stack Developer & Creator of Past Paper Archive
+            </p>
+            
+            <div class="flex flex-wrap justify-center md:justify-start gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
+                🚀 Django Expert
+              </span>
+              <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
+                🎨 UI/UX Enthusiast
+              </span>
+              <span class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
+                📚 Education Tech
+              </span>
+            </div>
+            
+            <!-- Social Links -->
+            <div class="flex justify-center md:justify-start gap-4">
+              <a href="https://github.com/Dang234" target="_blank" 
+                 class="w-12 h-12 bg-gray-800 dark:bg-gray-600 rounded-full flex items-center justify-center text-white hover:bg-black hover:scale-110 transition-all duration-300 shadow-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"/>
+                </svg>
+              </a>
+              <a href="mailto:dtangchan@gmail.com" 
+                 class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 hover:scale-110 transition-all duration-300 shadow-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                </svg>
+              </a>
+              <a href="https://linkedin.com/in/dang-tang" target="_blank" 
+                 class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 hover:scale-110 transition-all duration-300 shadow-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 11-.003-3.096 1.548 1.548 0 01.003 3.096zm-1.337 9.763H6.34v-8.59H3.667v8.59zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34c.734 0 1.332-.582 1.332-1.299V2.298C19 1.581 18.402 1 17.668 1z" clip-rule="evenodd"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About the Project -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8 border border-gray-200 dark:border-gray-700 fade-in-section">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+            <i class="fas fa-lightbulb text-white"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">About This Project</h2>
+        </div>
+        
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+          The <strong class="text-blue-600 dark:text-blue-400">Past Paper Archive</strong> was born from a simple observation: 
+          students everywhere struggle to find and access quality past papers for their exam preparation. 
+          What started as a personal solution quickly evolved into a comprehensive platform designed to democratize access to academic resources.
+        </p>
+        
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+          This platform combines modern web technologies with a user-centric design philosophy to create an intuitive, 
+          fast, and reliable resource that students can depend on. Every feature has been carefully crafted to enhance 
+          the studying experience and remove friction from the learning process.
+        </p>
+      </div>
+
+      <!-- Tech Stack & Features -->
+      <div class="grid md:grid-cols-2 gap-8 mb-8">
+        
+        <!-- Technical Stack -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 fade-in-section">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-cogs text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Tech Stack</h3>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                <i class="fab fa-python text-green-600 dark:text-green-400"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Django Framework</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Robust backend with advanced features</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <i class="fab fa-js text-blue-600 dark:text-blue-400"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">JavaScript & HTMX</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Interactive frontend experiences</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-cyan-100 dark:bg-cyan-900 rounded-lg flex items-center justify-center">
+                <i class="fas fa-palette text-cyan-600 dark:text-cyan-400"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Tailwind CSS</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Modern, responsive design system</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                <i class="fas fa-database text-orange-600 dark:text-orange-400"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">MySQL Database</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Reliable data storage and retrieval</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Social Links -->
-        <div class="mt-5 flex justify-center gap-4">
-            <a href="https://github.com/Dang234" target="_blank" class="text-gray-600 hover:text-black" title="GitHub">
-                <i class="fab fa-github fa-lg"></i>
-            </a>
-            <a href="mailto:dtangchan@gmail.com" class="text-red-500 hover:text-red-700" title="Email">
-                <i class="fas fa-envelope fa-lg"></i>
-            </a>
+        <!-- Key Features -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 fade-in-section">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-star text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Key Features</h3>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mt-0.5">
+                <i class="fas fa-search text-blue-600 dark:text-blue-400 text-xs"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Advanced Search</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Find papers by university, subject, year, and keywords</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mt-0.5">
+                <i class="fas fa-upload text-purple-600 dark:text-purple-400 text-xs"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Easy Upload</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Contribute papers with automatic metadata extraction</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mt-0.5">
+                <i class="fas fa-download text-green-600 dark:text-green-400 text-xs"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Instant Downloads</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">No ads, no wait times, just clean downloads</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mt-0.5">
+                <i class="fas fa-mobile-alt text-yellow-600 dark:text-yellow-400 text-xs"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Mobile Responsive</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Perfect experience on all devices</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Back Button -->
-        <div class="mt-6">
-            <a href="{% url 'home' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm shadow-sm">Back to Home</a>
+      <!-- Mission Statement -->
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white mb-8 fade-in-section">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-graduation-cap text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold mb-4">Our Mission</h3>
+          <p class="text-lg leading-relaxed max-w-2xl mx-auto">
+            To make academic resources accessible to every student, anywhere. We believe that quality education materials 
+            shouldn't be behind paywalls or buried in difficult-to-navigate systems. Every student deserves the tools they need to succeed.
+          </p>
         </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700 fade-in-section">
+          <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">5K+</div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">Papers Archived</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700 fade-in-section">
+          <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">50+</div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">Universities</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700 fade-in-section">
+          <div class="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">10K+</div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">Happy Students</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700 fade-in-section">
+          <div class="text-2xl font-bold text-orange-600 dark:text-orange-400 mb-1">24/7</div>
+          <p class="text-sm text-gray-600 dark:text-gray-300">Available</p>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center border border-gray-200 dark:border-gray-700 fade-in-section">
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          You are now a family with thousands of students who are already using our platform to ace their exams.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="{% url 'home' %}" 
+             class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105">
+            <i class="fas fa-arrow-left"></i>
+            Back to Platform
+          </a>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</section>
+
+<script>
+// Intersection Observer for fade-in animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+// Observe all fade-in elements
+document.querySelectorAll('.fade-in-section').forEach(el => {
+  observer.observe(el);
+});
+
+// Add some interactive elements
+document.addEventListener('DOMContentLoaded', function() {
+  // Add hover effects to tech stack items
+  const techItems = document.querySelectorAll('.space-y-4 > div');
+  techItems.forEach(item => {
+    item.addEventListener('mouseenter', function() {
+      this.classList.add('transform', 'scale-105', 'transition-transform', 'duration-200');
+    });
+    item.addEventListener('mouseleave', function() {
+      this.classList.remove('transform', 'scale-105');
+    });
+  });
+});
+</script>
 
 {% endblock %}

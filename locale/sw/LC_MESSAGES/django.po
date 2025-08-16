@@ -1,0 +1,38 @@
+# Swahili translations
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: sw\n"
+
+msgid "Past Papers"
+msgstr "Mitihani ya Zamani"
+
+msgid "PastPapers"
+msgstr "MtihaniniZamani"
+
+msgid "My Files"
+msgstr "Faili Zangu"
+
+msgid "Settings"
+msgstr "Mipangilio"
+
+msgid "Themes"
+msgstr "Mandhari"
+
+msgid "Notifications"
+msgstr "Arifa"
+
+msgid "Language"
+msgstr "Lugha"
+
+msgid "About"
+msgstr "Kuhusu"
+
+msgid "Logout"
+msgstr "Ondoka"
+
+msgid "Notifications enabled!"
+msgstr "Arifa zimewashwa!"
+
+msgid "You will now receive notifications from PastPapers."
+msgstr "Sasa utapokea arifa kutoka MtihaniniZamani."

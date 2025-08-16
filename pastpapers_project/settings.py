@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5r-792ut=-(8lni8x_^+*&%c9m-g1*1j$nb$g9!jt@htxoxnln'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -142,3 +142,35 @@ AUTHENTICATION_BACKENDS = [
 
 
 
+# Add these to your settings.py
+
+# Internationalization
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+# Language settings
+LANGUAGE_CODE = 'en'  # Default language
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('sw', 'Kiswahili'),
+    ('fr', 'Français'),
+]
+
+# Locale paths - Django will look for translation files here
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Middleware - Add LocaleMiddleware (ORDER MATTERS!)
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # ADD THIS LINE
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]

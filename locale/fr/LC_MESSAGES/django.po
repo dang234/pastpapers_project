@@ -1,0 +1,38 @@
+# French translations
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: fr\n"
+
+msgid "Past Papers"
+msgstr "Examens Passés"
+
+msgid "PastPapers"
+msgstr "ExamensPassés"
+
+msgid "My Files"
+msgstr "Mes Fichiers"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "About"
+msgstr "À Propos"
+
+msgid "Logout"
+msgstr "Déconnexion"
+
+msgid "Notifications enabled!"
+msgstr "Notifications activées!"
+
+msgid "You will now receive notifications from PastPapers."
+msgstr "Vous recevrez maintenant des notifications de ExamensPassés."

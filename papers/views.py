@@ -12,6 +12,8 @@ import os
 import base64
 from django.conf import settings
 from .forms import UserForm, ProfileForm
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
 
 
@@ -229,15 +231,25 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
-@login_required
-def set_theme(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        theme = data.get('theme', 'light')
-        request.session['theme'] = theme
-        return JsonResponse({'status': 'ok', 'theme': theme})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+# Replace your existing set_theme function with this updated version:
 
+
+@csrf_exempt  # Add this decorator
+@require_http_methods(["POST"])  # Add this decorator
+def set_theme(request):
+    """Handle theme switching requests from frontend"""
+    try:
+        data = json.loads(request.body)
+        theme = data.get('theme')
+        
+        if theme in ['light', 'dark']:
+            # Save theme in session
+            request.session['theme'] = theme
+            return JsonResponse({'status': 'success', 'theme': theme})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid theme'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
 
 # ==========================
 # ℹ️ About Page

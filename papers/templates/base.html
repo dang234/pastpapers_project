@@ -1,9 +1,11 @@
 <!-- templates/base.html -->
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en" class="">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}" class="">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Past Papers{% endblock %}</title>
+    <title>{% block title %}{% trans "Past Papers" %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Apply saved theme before Tailwind loads -->
@@ -19,8 +21,13 @@
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FIXED: Added Tailwind dark mode configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
-
 
 <body class="bg-gray-50 font-sans text-gray-800 text-sm dark:bg-gray-900 dark:text-gray-100 min-h-screen">
 
@@ -29,28 +36,37 @@
         <div class="max-w-7xl mx-auto px-3 py-1 flex justify-between items-center">
             
             <!-- Logo -->
-            <a href="{% url 'home' %}" class="text-sm font-bold text-blue-600 dark:text-blue-400">📚 PastPapers</a>
+            <a href="{% url 'home' %}" class="text-sm font-bold text-blue-600 dark:text-blue-400">📚 {% trans "PastPapers" %}</a>
 
             <!-- Menu Items -->
             <div class="flex items-center gap-3 text-xs">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'my_files' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">My Files</a>
+                    <a href="{% url 'my_files' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">{% trans "My Files" %}</a>
+
+                    <!-- Notifications Badge -->
+                    <!-- <div class="relative">
+                        <button id="notificationBell" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 focus:outline-none">
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center hidden">
+                                0
+                            </span>
+                        </button>
+                    </div> -->
 
                     <!-- Settings Dropdown -->
                     <div class="relative" id="settingsMenu">
                         <button id="settingsButton" class="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 focus:outline-none">
-                            ⚙️ <span>Settings</span>
+                            ⚙️ <span>{% trans "Settings" %}</span>
                         </button>
 
-                        <!-- Dropdown -->
+                        <!-- Dropdown - FIXED: Added z-index -->
                         <div id="settingsDropdown"
                              class="absolute right-0 mt-1 w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg 
-                                    opacity-0 invisible transform scale-y-0 origin-top transition-all duration-200 text-xs">
+                                    opacity-0 invisible transform scale-y-0 origin-top transition-all duration-200 text-xs z-50">
                             
                             <!-- Theme -->
                             <div class="p-1.5 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center justify-between">
-                                    <span>Themes</span>
+                                    <span>{% trans "Themes" %}</span>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="themeToggle" class="sr-only peer">
                                         <div class="w-7 h-3.5 bg-gray-300 peer-checked:bg-blue-600 rounded-full 
@@ -64,7 +80,7 @@
                             <!-- Notifications -->
                             <div class="p-1.5 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center justify-between">
-                                    <span>Notifications</span>
+                                    <span>{% trans "Notifications" %}</span>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="notifToggle" class="sr-only peer">
                                         <div class="w-7 h-3.5 bg-gray-300 peer-checked:bg-blue-600 rounded-full 
@@ -77,22 +93,22 @@
 
                             <!-- Language -->
                             <div class="p-1.5">
-                                <label class="block mb-0.5">Language</label>
+                                <label class="block mb-0.5">{% trans "Language" %}</label>
                                 <select id="languageSelect" class="w-full px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs focus:outline-none">
-                                    <option value="en">English</option>
-                                    <option value="sw">Swahili</option>
-                                    <option value="fr">French</option>
+                                    <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+                                    <option value="sw" {% if LANGUAGE_CODE == 'sw' %}selected{% endif %}>Kiswahili</option>
+                                    <option value="fr" {% if LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <a href="{% url 'about' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">About</a>
+                    <a href="{% url 'about' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">{% trans "About" %}</a>
 
             
                     <form method="POST" action="{% url 'logout' %}" class="inline">
                         {% csrf_token %}
-                        <button type="submit" class="text-red-500 hover:text-red-600">Logout</button>
+                        <button type="submit" class="text-red-500 hover:text-red-600">{% trans "Logout" %}</button>
                     </form>
 
                     <!-- User Avatar with Initials -->
@@ -131,13 +147,10 @@
         const savedNotif = localStorage.getItem('notifications');
         const savedLang = localStorage.getItem('language');
 
-        // Apply saved theme or default to light
-        if (savedTheme === 'dark') {
-            html.classList.add('dark');
-            if (themeToggle) themeToggle.checked = true;
-        } else {
-            html.classList.remove('dark');
-            if (themeToggle) themeToggle.checked = false;
+        // FIXED: Better toggle initialization - check current HTML state
+        if (themeToggle) {
+            const isDark = html.classList.contains('dark');
+            themeToggle.checked = isDark;
         }
 
         // Apply saved notifications
@@ -150,13 +163,22 @@
             languageSelect.value = savedLang;
         }
 
-        // Theme toggle
+        // Theme toggle - FIXED: Improved logic
         if (themeToggle) {
             themeToggle.addEventListener('change', () => {
                 const theme = themeToggle.checked ? 'dark' : 'light';
-                html.classList.toggle('dark', theme === 'dark');
+                
+                // Apply theme to HTML
+                if (theme === 'dark') {
+                    html.classList.add('dark');
+                } else {
+                    html.classList.remove('dark');
+                }
+                
+                // Save to localStorage
                 localStorage.setItem('theme', theme);
 
+                // Send to Django backend
                 fetch('/set-theme/', {
                     method: 'POST',
                     headers: {
@@ -164,6 +186,8 @@
                         'X-CSRFToken': getCSRFToken(),
                     },
                     body: JSON.stringify({ theme }),
+                }).catch(error => {
+                    console.error('Theme update failed:', error);
                 });
             });
         }
@@ -175,24 +199,106 @@
             });
         }
 
-        // Language change
+        // Language change - FIXED: Actually change Django language
         if (languageSelect) {
             languageSelect.addEventListener('change', () => {
-                localStorage.setItem('language', languageSelect.value);
+                const selectedLanguage = languageSelect.value;
+                localStorage.setItem('language', selectedLanguage);
+                
+                // Send language change to Django backend
+                fetch('/set-language/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: `language=${selectedLanguage}`,
+                }).then(() => {
+                    // Reload page to apply new language
+                    window.location.reload();
+                }).catch(error => {
+                    console.error('Language change failed:', error);
+                });
             });
         }
 
-        // Settings dropdown toggle
+        // Notifications functionality
+        const notificationBell = document.getElementById('notificationBell');
+        const notificationBadge = document.getElementById('notificationBadge');
+        
+        if (notifToggle) {
+            notifToggle.addEventListener('change', () => {
+                const enabled = notifToggle.checked;
+                localStorage.setItem('notifications', enabled ? 'on' : 'off');
+                
+                if (enabled) {
+                    // Request notification permission
+                    if ('Notification' in window && Notification.permission === 'default') {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                showNotification('{% trans "Notifications enabled!" %}', '{% trans "You will now receive notifications from PastPapers." %}');
+                            }
+                        });
+                    } else if (Notification.permission === 'granted') {
+                        showNotification('{% trans "Notifications enabled!" %}', '{% trans "You will now receive notifications from PastPapers." %}');
+                    }
+                }
+            });
+        }
+
+        // Notification bell click handler
+        if (notificationBell) {
+            notificationBell.addEventListener('click', () => {
+                // Toggle notification visibility or show notification center
+                if (notificationBadge && !notificationBadge.classList.contains('hidden')) {
+                    notificationBadge.classList.add('hidden');
+                    notificationBadge.textContent = '0';
+                }
+            });
+        }
+
+        // Function to show browser notifications
+        function showNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: '/static/favicon.ico', // Update with your icon path
+                    badge: '/static/favicon.ico'
+                });
+                
+                // Update notification badge
+                if (notificationBadge) {
+                    const currentCount = parseInt(notificationBadge.textContent) || 0;
+                    notificationBadge.textContent = currentCount + 1;
+                    notificationBadge.classList.remove('hidden');
+                }
+            }
+        }
+
+        // Check for notifications permission on page load
+        const savedNotifications = localStorage.getItem('notifications');
+        if (savedNotifications === 'on' && 'Notification' in window && Notification.permission === 'default') {
+            // Auto-request permission if notifications are enabled but permission not granted
+            setTimeout(() => {
+                Notification.requestPermission();
+            }, 2000);
+        }
+
+        // Settings dropdown toggle - FIXED: Simplified logic
         if (settingsButton && settingsDropdown) {
             settingsButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = settingsDropdown.classList.contains('opacity-100');
-                settingsDropdown.classList.toggle('opacity-100', !isOpen);
-                settingsDropdown.classList.toggle('opacity-0', isOpen);
-                settingsDropdown.classList.toggle('visible', !isOpen);
-                settingsDropdown.classList.toggle('invisible', isOpen);
-                settingsDropdown.classList.toggle('scale-y-100', !isOpen);
-                settingsDropdown.classList.toggle('scale-y-0', isOpen);
+                
+                if (isOpen) {
+                    // Close
+                    settingsDropdown.classList.add('opacity-0', 'invisible', 'scale-y-0');
+                    settingsDropdown.classList.remove('opacity-100', 'visible', 'scale-y-100');
+                } else {
+                    // Open
+                    settingsDropdown.classList.remove('opacity-0', 'invisible', 'scale-y-0');
+                    settingsDropdown.classList.add('opacity-100', 'visible', 'scale-y-100');
+                }
             });
 
             // Close when clicking outside
