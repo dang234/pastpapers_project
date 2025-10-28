@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h3 class="mb-4">My Uploaded Past Papers</h3>
+    <h3 class="mb-4">My Downloaded Past Papers</h3>
 
     {% if papers %}
         <div class="table-responsive">
@@ -14,8 +14,8 @@
                         <th>Department</th>
                         <th>Year</th>
                         <th>Semester</th>
-                        <th>Uploaded</th>
-                        <th>Downloads</th>
+                        <th>Downloaded On</th>
+                        <th>Uploader</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -27,11 +27,10 @@
                         <td>{{ paper.department }}</td>
                         <td>{{ paper.year }}</td>
                         <td>{{ paper.semester }}</td>
-                        <td>{{ paper.uploaded_at|date:"Y-m-d H:i" }}</td>
-                        <td>{{ paper.download_count }}</td>
+                        <td>{{ paper.user_downloads.first.downloaded_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ paper.user.username }}</td>
                         <td class="text-center">
-                            <a href="{% url 'edit_paper' paper.id %}" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="{% url 'delete_paper' paper.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                            <a href="{% url 'download_paper' paper.id %}" class="btn btn-sm btn-success">Download Again</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -59,7 +58,7 @@
             </nav>
         </div>
     {% else %}
-        <div class="alert alert-info">You haven’t uploaded any past papers yet.</div>
+        <div class="alert alert-info">You haven't downloaded any past papers yet.</div>
     {% endif %}
 </div>
 {% endblock %}

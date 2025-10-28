@@ -152,7 +152,7 @@ class ActionTests(BaseTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {'status': 'ok', 'theme': 'dark'})
+        self.assertJSONEqual(response.content, {'status': 'success', 'theme': 'dark'})
         self.assertEqual(self.client.session['theme'], 'dark')
 
         # GET request should fail

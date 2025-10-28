@@ -32,25 +32,16 @@
 <body class="bg-gray-50 font-sans text-gray-800 text-sm dark:bg-gray-900 dark:text-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="bg-white dark:bg-gray-800 border-b shadow-sm">
+    <nav class="bg-white dark:bg-gray-800 border-b shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-3 py-1 flex justify-between items-center">
             
             <!-- Logo -->
-            <a href="{% url 'home' %}" class="text-sm font-bold text-blue-600 dark:text-blue-400">📚 {% trans "PastPapers" %}</a>
+            <a href="{% url 'home' %}" class="text-sm font-bold text-blue-600 dark:text-blue-400">📚 {% trans "Nilearner" %}</a>
 
             <!-- Menu Items -->
             <div class="flex items-center gap-3 text-xs">
                 {% if user.is_authenticated %}
                     <a href="{% url 'my_files' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600">{% trans "My Files" %}</a>
-
-                    <!-- Notifications Badge -->
-                    <!-- <div class="relative">
-                        <button id="notificationBell" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 focus:outline-none">
-                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center hidden">
-                                0
-                            </span>
-                        </button>
-                    </div> -->
 
                     <!-- Settings Dropdown -->
                     <div class="relative" id="settingsMenu">
@@ -114,7 +105,7 @@
                     <!-- User Avatar with Initials -->
                     <div class="relative group">
                         <!-- Avatar -->
-                        <a href="{% url 'account_manager' %}" class="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white font-bold">
+                        <a href="{% url 'account_manager' %}" class="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white font-sans">
                             {% if user.profile.profile_image %}
                                 <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="w-4 h-4 rounded-full object-cover">
                             {% else %}

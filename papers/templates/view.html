@@ -1,97 +1,274 @@
 {% extends 'base.html' %}
 
-{% block title %}View Past Papers{% endblock %}
+{% block title %}Past Papers{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 text-gray-800 dark:text-gray-200">
-  <h2 class="text-center text-xl font-bold mb-6">📚 Past Papers Archive</h2>
-
-  <!-- Search & Filter -->
-  <form method="GET" action="{% url 'view_papers' %}" class="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
-    <input type="text" name="q" placeholder="Search title, code, year..."
-      value="{{ query|default:'' }}"
-      class="col-span-2 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400">
-
-    <select name="department" class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs">
-      <option value="">All Departments</option>
-      {% for dept in departments %}
-        <option value="{{ dept }}" {% if dept == selected_department %}selected{% endif %}>{{ dept }}</option>
-      {% endfor %}
-    </select>
-
-    <select name="year" class="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs">
-      <option value="">All Years</option>
-      {% for y in years %}
-        <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
-      {% endfor %}
-    </select>
-
-    <button type="submit"
-      class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs shadow">
-      Filter
-    </button>
-  </form>
-
-  <!-- Papers Table -->
-  {% if papers %}
-  <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-    <table class="w-full text-left text-xs">
-      <thead class="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <tr>
-          <th class="px-2 py-1 font-semibold">Title</th>
-          <th class="px-2 py-1 font-semibold">Course Code</th>
-          <th class="px-2 py-1 font-semibold">Department</th>
-          <th class="px-2 py-1 font-semibold">Year</th>
-          <th class="px-2 py-1 font-semibold">Semester</th>
-          <th class="px-2 py-1 font-semibold text-center">File</th>
-          <th class="px-2 py-1 font-semibold">Uploaded</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-        {% for paper in papers %}
-        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-          <td class="px-2 py-1">{{ paper.title }}</td>
-          <td class="px-2 py-1">{{ paper.course_code }}</td>
-          <td class="px-2 py-1">{{ paper.department }}</td>
-          <td class="px-2 py-1">{{ paper.year }}</td>
-          <td class="px-2 py-1">{{ paper.semester }}</td>
-          <td class="px-2 py-1 text-center">
-            <a href="{% url 'download_paper' paper.id %}"
-              class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-2 py-0.5 rounded text-xs shadow">
-              Download
-            </a>
-            <div class="text-gray-500 text-[10px] mt-0.5">{{ paper.download_count }} downloads</div>
-          </td>
-          <td class="px-2 py-1">{{ paper.uploaded_at|date:"Y-m-d H:i" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <div class="flex justify-center items-center mt-4 space-x-2 text-xs">
-    {% if papers.has_previous %}
-      <a href="?page={{ papers.previous_page_number }}&q={{ query }}&department={{ selected_department }}&year={{ selected_year }}"
-        class="px-2 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">Previous</a>
-    {% else %}
-      <span class="px-2 py-1 text-gray-400 border rounded cursor-not-allowed">Previous</span>
-    {% endif %}
-
-    <span class="px-2 py-1">Page {{ papers.number }} of {{ papers.paginator.num_pages }}</span>
-
-    {% if papers.has_next %}
-      <a href="?page={{ papers.next_page_number }}&q={{ query }}&department={{ selected_department }}&year={{ selected_year }}"
-        class="px-2 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">Next</a>
-    {% else %}
-      <span class="px-2 py-1 text-gray-400 border rounded cursor-not-allowed">Next</span>
-    {% endif %}
-  </div>
-
-  {% else %}
-    <div class="text-center mt-8 text-gray-500 text-sm">
-      No past papers found.
+<div class="min-h-screen bg-white dark:bg-gray-900">
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Breadcrumb -->
+    <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-2 text-xs">
+        <a href="{% url 'home' %}" class="text-blue-600 dark:text-blue-400 hover:underline">Organization</a>
+        <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-gray-900 dark:text-white">Past Papers</span>
+      </div>
     </div>
-  {% endif %}
+
+    <!-- Tab Navigation -->
+    <div class="px-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex space-x-6">
+        <a href="{% url 'view_papers' %}" class="py-3 text-xs font-medium {% if not filter_type or filter_type == 'all' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300{% endif %}">
+          All
+        </a>
+        <a href="{% url 'view_papers' %}?filter=files" class="py-3 text-xs font-medium {% if filter_type == 'files' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300{% endif %}">
+          Files
+        </a>
+        <a href="{% url 'view_papers' %}?filter=recent" class="py-3 text-xs font-medium {% if filter_type == 'recent' %}text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400{% else %}text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300{% endif %}">
+          Recent
+        </a>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <form method="GET" action="{% url 'view_papers' %}" class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        
+        <!-- Left side filters -->
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Filters</span>
+          
+          <div class="flex items-center space-x-1">
+            <span class="text-xs text-gray-600 dark:text-gray-400">Department</span>
+            <select name="department" onchange="this.form.submit()" class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500">
+              <option value="">All</option>
+              {% for dept in departments %}
+                <option value="{{ dept }}" {% if dept == selected_department %}selected{% endif %}>{{ dept }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="flex items-center space-x-1">
+            <span class="text-xs text-gray-600 dark:text-gray-400">Year</span>
+            <select name="year" onchange="this.form.submit()" class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500">
+              <option value="">All</option>
+              {% for y in years %}
+                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Right side sort and search -->
+        <div class="flex items-center gap-3">
+          <div class="flex items-center space-x-1">
+            <span class="text-xs text-gray-600 dark:text-gray-400">Sort by</span>
+            <select name="sort" onchange="this.form.submit()" class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500">
+              <option value="relevance" {% if sort_by == 'relevance' %}selected{% endif %}>Relevance</option>
+              <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Name</option>
+              <option value="-uploaded_at" {% if sort_by == '-uploaded_at' %}selected{% endif %}>Modified</option>
+              <option value="-year" {% if sort_by == '-year' %}selected{% endif %}>Year</option>
+            </select>
+          </div>
+
+          <div class="relative">
+            <input type="text" name="q" placeholder="Search papers..." 
+                   value="{{ query|default:'' }}"
+                   class="w-64 px-3 py-1.5 pl-8 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-500">
+            <div class="absolute inset-y-0 left-0 pl-2 flex items-center">
+              <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <button type="submit" class="absolute inset-y-0 right-0 pr-2 flex items-center">
+              <div class="w-4 h-4 bg-blue-600 rounded flex items-center justify-center">
+                <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Content -->
+    <div class="px-4 py-3">
+      {% if papers %}
+        <!-- Results count -->
+        <div class="mb-3">
+          <span class="text-xs text-gray-600 dark:text-gray-400">{{ papers.paginator.count }} results</span>
+        </div>
+
+        <!-- Papers List -->
+        <div class="space-y-0 border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
+          {% for paper in papers %}
+            <div class="flex items-center px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+              
+              <!-- File icon -->
+              <div class="flex-shrink-0 mr-3">
+                <div class="w-6 h-8 bg-red-600 rounded flex items-center justify-center">
+                  <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Paper details -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h3 class="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">
+                      <a href="{% url 'download_paper' paper.id %}">{{ paper.title|upper }}</a>
+                    </h3>
+                    
+                    <!-- Metadata row -->
+                    <div class="flex items-center mt-0.5 text-xs text-gray-500 dark:text-gray-400 space-x-3">
+                      <span class="flex items-center">
+                        <svg class="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                        SharePoint
+                      </span>
+                      <span class="flex items-center">
+                        <svg class="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                        </svg>
+                        Past-paper
+                      </span>
+                      <span>{{ paper.course_code }}</span>
+                    </div>
+
+                    <div class="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                      {{ paper.course_code }}/{{ paper.department|upper }}/{{ paper.year }} - {{ paper.semester }} SEMESTER
+                    </div>
+
+                    <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Modified {{ paper.uploaded_at|date:"M d, Y" }}
+                    </div>
+                  </div>
+
+                  <!-- Thumbnail -->
+                  <div class="ml-3 flex-shrink-0">
+                    <div class="w-16 h-12 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded flex items-center justify-center">
+                      <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="ml-3 flex-shrink-0 relative">
+                <button class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 options-btn" 
+                        data-paper-id="{{ paper.id }}">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                  </svg>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu absolute right-0 mt-1 w-40 bg-white dark:bg-gray-800 rounded shadow-lg border border-gray-200 dark:border-gray-700 hidden z-10" data-paper-id="{{ paper.id }}">
+                  <div class="py-1">
+                    <a href="{% url 'download_paper' paper.id %}" 
+                       class="block px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <svg class="w-3 h-3 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                      </svg>
+                      Download
+                    </a>
+                    <a href="#" class="block px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <svg class="w-3 h-3 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                      </svg>
+                      Preview
+                    </a>
+                    <a href="#" class="block px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <svg class="w-3 h-3 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/>
+                      </svg>
+                      Copy link
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-4 flex justify-between items-center">
+          <div class="text-xs text-gray-600 dark:text-gray-400">
+            {{ papers.start_index }}-{{ papers.end_index }} of {{ papers.paginator.count }}
+          </div>
+          
+          <div class="flex space-x-1">
+            {% if papers.has_previous %}
+              <a href="?page={{ papers.previous_page_number }}&q={{ query }}&department={{ selected_department }}&year={{ selected_year }}&filter={{ filter_type }}&sort={{ sort_by }}" 
+                 class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300">
+                Previous
+              </a>
+            {% endif %}
+
+            <span class="px-2 py-1 text-xs bg-blue-600 text-white rounded">
+              {{ papers.number }}
+            </span>
+
+            {% if papers.has_next %}
+              <a href="?page={{ papers.next_page_number }}&q={{ query }}&department={{ selected_department }}&year={{ selected_year }}&filter={{ filter_type }}&sort={{ sort_by }}" 
+                 class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300">
+                Next
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+      {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-8">
+          <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-1">No results found</h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Try different search terms or adjust your filters</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle dropdown toggle
+  document.querySelectorAll('.options-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const paperId = this.getAttribute('data-paper-id');
+      const dropdown = document.querySelector(`.dropdown-menu[data-paper-id="${paperId}"]`);
+      
+      // Close all other dropdowns
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu !== dropdown) {
+          menu.classList.add('hidden');
+        }
+      });
+      
+      // Toggle current dropdown
+      dropdown.classList.toggle('hidden');
+    });
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+      menu.classList.add('hidden');
+    });
+  });
+});
+</script>
+
 {% endblock %}

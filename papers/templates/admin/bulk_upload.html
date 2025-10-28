@@ -1,0 +1,257 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:"Django site admin" }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; <a href="{% url 'admin:papers_pastpaper_changelist' %}">Past papers</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<div class="module aligned">
+    <form method="post" enctype="multipart/form-data" id="bulk-upload-form">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div>
+                <label for="{{ form.department.id_for_label }}">Department:</label>
+                {{ form.department }}
+                {% if form.department.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.department.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div>
+                <label for="{{ form.year.id_for_label }}">Year:</label>
+                {{ form.year }}
+                {% if form.year.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.year.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div>
+                <label for="{{ form.semester.id_for_label }}">Semester:</label>
+                {{ form.semester }}
+                {% if form.semester.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.semester.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div>
+                <label for="{{ form.files.id_for_label }}">PDF Files:</label>
+                {{ form.files }}
+                {% if form.files.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.files.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <p class="help">{{ form.files.help_text }}</p>
+            </div>
+        </div>
+
+        <!-- Dynamic file details will be inserted here -->
+        <div id="file-details" style="display: none;">
+            <h3>File Details</h3>
+            <div id="file-list"></div>
+        </div>
+
+        <div class="submit-row">
+            <input type="submit" value="Upload Papers" class="default" id="submit-btn" disabled>
+            <a href="{% url 'admin:papers_pastpaper_changelist' %}" class="button cancel-link">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.file-item {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.file-item h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.file-fields {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.field-group {
+    flex: 1;
+}
+
+.field-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.field-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-row {
+    margin-bottom: 20px;
+}
+
+.form-row > div {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+}
+
+.form-row label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.help {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filesInput = document.getElementById('{{ form.files.id_for_label }}');
+    const fileDetails = document.getElementById('file-details');
+    const fileList = document.getElementById('file-list');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    filesInput.addEventListener('change', handleFileSelection);
+    
+    function handleFileSelection(event) {
+        const files = event.target.files;
+        
+        if (files.length === 0) {
+            fileDetails.style.display = 'none';
+            submitBtn.disabled = true;
+            return;
+        }
+        
+        // Validate all files are PDFs
+        for (let file of files) {
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                alert(`File "${file.name}" is not a PDF. Please select only PDF files.`);
+                event.target.value = '';
+                fileDetails.style.display = 'none';
+                submitBtn.disabled = true;
+                return;
+            }
+        }
+        
+        // Generate form fields for each file
+        fileList.innerHTML = '';
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = file.name.replace('.pdf', '');
+            
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'file-item';
+            fileDiv.innerHTML = `
+                <h4>📄 ${file.name}</h4>
+                <div class="file-fields">
+                    <div class="field-group">
+                        <label>Course Code *</label>
+                        <input type="text" name="course_codes[]" 
+                               placeholder="e.g., CS101" required 
+                               class="form-control">
+                    </div>
+                    <div class="field-group">
+                        <label>Paper Title *</label>
+                        <input type="text" name="titles[]" 
+                               value="${fileName}" 
+                               placeholder="Paper title" required
+                               class="form-control">
+                    </div>
+                </div>
+            `;
+            
+            fileList.appendChild(fileDiv);
+        }
+        
+        fileDetails.style.display = 'block';
+        submitBtn.disabled = false;
+    }
+    
+    // Form validation before submit
+    document.getElementById('bulk-upload-form').addEventListener('submit', function(event) {
+        const courseCodeInputs = document.querySelectorAll('input[name="course_codes[]"]');
+        const titleInputs = document.querySelectorAll('input[name="titles[]"]');
+        
+        let isValid = true;
+        
+        courseCodeInputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.borderColor = '#dc3545';
+            } else {
+                input.style.borderColor = '#ccc';
+            }
+        });
+        
+        titleInputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.borderColor = '#dc3545';
+            } else {
+                input.style.borderColor = '#ccc';
+            }
+        });
+        
+        if (!isValid) {
+            event.preventDefault();
+            alert('Please fill in all course codes and titles.');
+        }
+    });
+});
+</script>
+{% endblock %}

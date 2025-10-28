@@ -1,0 +1,64 @@
+<!-- templates/admin/papers/pastpaper/change_list.html -->
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.bulk-upload-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.bulk-upload-btn:hover {
+    background-color: #218838;
+    color: white;
+    text-decoration: none;
+}
+
+.bulk-actions {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+</style>
+{% endblock %}
+
+{% block content_title %}
+    <h1>{{ cl.opts.verbose_name_plural|capfirst }}</h1>
+    
+    {% if has_change_permission %}
+    <div class="bulk-actions">
+        <a href="{% url 'admin:pastpaper_bulk_upload' %}" class="bulk-upload-btn">
+            📁 Bulk Upload Papers
+        </a>
+        <span style="color: #6c757d; font-size: 12px;">
+            Upload multiple PDF files at once with automatic metadata extraction
+        </span>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block result_list %}
+    {{ block.super }}
+    
+    {% if cl.result_count %}
+    <div style="margin-top: 15px; padding: 10px; background-color: #e8f4f8; border-radius: 4px;">
+        <strong>Total Papers:</strong> {{ cl.result_count }}
+        {% if cl.result_count > 0 %}
+            | <strong>Quick Stats:</strong> 
+            <span style="margin-left: 10px;">
+                Use the bulk actions above to download selected papers as ZIP or reset download counts.
+            </span>
+        {% endif %}
+    </div>
+    {% endif %}
+{% endblock %}
